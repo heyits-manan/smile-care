@@ -20,6 +20,18 @@ export default function AdminSidebar() {
       exact: false,
     },
     {
+      href: "/admin/patients",
+      label: "Patients",
+      icon: "🏥",
+      exact: false,
+    },
+    {
+      href: "/admin/dentists",
+      label: "Dentists",
+      icon: "👨‍⚕️",
+      exact: false,
+    },
+    {
       href: "/admin/users",
       label: "Manage Admins",
       icon: "👥",
