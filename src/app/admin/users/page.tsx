@@ -1,7 +1,6 @@
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { desc } from "drizzle-orm";
-import UserRoleManager from "@/components/admin/UserRoleManager";
 
 export default async function UsersPage() {
   // Get all users
@@ -11,12 +10,8 @@ export default async function UsersPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
-          User Management
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Manage user roles and permissions
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+        <p className="text-gray-600 mt-2">Manage user roles and permissions</p>
       </div>
 
       {/* Stats */}
@@ -47,8 +42,12 @@ export default async function UsersPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{stat.value}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  {stat.label}
+                </p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">
+                  {stat.value}
+                </p>
               </div>
               <div
                 className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white text-2xl shadow-lg`}
@@ -88,7 +87,10 @@ export default async function UsersPage() {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {allUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={user.id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm">
@@ -125,18 +127,12 @@ export default async function UsersPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-600">
-                      {new Date(user.createdAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
+                      {new Date(user.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
                       })}
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <UserRoleManager
-                      user={user}
-                      currentUserId={user.id}
-                    />
                   </td>
                 </tr>
               ))}
