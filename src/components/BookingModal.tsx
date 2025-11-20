@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Dentist } from "@/data/dentists";
+import { Dentist } from "@/db/schema";
 import { Appointment, BookingFormData } from "@/types/appointment";
 import { useLocalStorage } from "@/utils/useLocalStorage";
 
@@ -23,7 +23,7 @@ export default function BookingModal({
   onClose,
   onBookingConfirmed,
 }: BookingModalProps) {
-  const [appointments, setAppointments] = useLocalStorage<Appointment[]>(
+  const [, setAppointments] = useLocalStorage<Appointment[]>(
     "appointments",
     []
   );
@@ -166,13 +166,45 @@ export default function BookingModal({
     }
   };
 
-  const availableDates = Object.keys(dentist.availableSlots);
-  const availableTimes = formData.date
-    ? dentist.availableSlots[formData.date] || []
-    : [];
+  const availableSlots = dentist.availableSlots as Record<string, string[]>;
+
+  // Generate available dates for the next 30 days
+  const getAvailableDates = () => {
+    const dates: { date: string; dayName: string }[] = [];
+    const today = new Date();
+
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
+
+      // Only include dates where the day of week has available slots
+      if (availableSlots[dayName] && availableSlots[dayName].length > 0) {
+        dates.push({
+          date: date.toISOString().split("T")[0],
+          dayName: dayName
+        });
+      }
+    }
+
+    return dates;
+  };
+
+  const availableDates = getAvailableDates();
+
+  // Get day name from selected date to look up available times
+  const getAvailableTimes = () => {
+    if (!formData.date) return [];
+
+    const date = new Date(formData.date + "T00:00:00");
+    const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
+    return availableSlots[dayName] || [];
+  };
+
+  const availableTimes = getAvailableTimes();
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    const date = new Date(dateString + "T00:00:00");
     return date.toLocaleDateString("en-US", {
       weekday: "short",
       month: "short",
@@ -213,7 +245,7 @@ export default function BookingModal({
                   <span>•</span>
                   <span className="flex items-center gap-1">
                     <span>⭐</span>
-                    {dentist.rating.toFixed(1)}
+                    {Number(dentist.rating).toFixed(1)}
                   </span>
                 </p>
               </div>
@@ -450,8 +482,8 @@ export default function BookingModal({
                       >
                         <option value="">📅 Select a date</option>
                         {availableDates.map((d) => (
-                          <option key={d} value={d}>
-                            {formatDate(d)}
+                          <option key={d.date} value={d.date}>
+                            {formatDate(d.date)}
                           </option>
                         ))}
                       </select>
@@ -614,7 +646,7 @@ export default function BookingModal({
                     <div className="flex items-center gap-1 mt-1">
                       <span className="text-yellow-500">⭐</span>
                       <span className="text-sm font-semibold">
-                        {dentist.rating.toFixed(1)} rating
+                        {Number(dentist.rating).toFixed(1)} rating
                       </span>
                     </div>
                   </div>

@@ -1,21 +1,50 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { dentists } from "@/data/dentists";
+import { Dentist } from "@/db/schema";
 import BookingModal from "@/components/BookingModal";
 import Image from "next/image";
-import Link from "next/link";
 
 export default function DentistDetailPage() {
   const params = useParams();
   const id = params.id as string;
-  const dentist = dentists.find((d) => d.id === id);
+  const [dentist, setDentist] = useState<Dentist | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDentist = async () => {
+      try {
+        const response = await fetch(`/api/dentists/${id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setDentist(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch dentist:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDentist();
+  }, [id]);
+
+  if (loading)
+    return (
+      <div className="p-12 text-center">
+        <div className="text-6xl mb-4">⏳</div>
+        <h3 className="text-2xl font-bold text-gray-900">Loading...</h3>
+      </div>
+    );
 
   if (!dentist)
     return <div className="p-12 text-center">Dentist not found</div>;
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date();
+  const dayName = today.toLocaleDateString("en-US", { weekday: "long" });
+  const availableSlots = dentist.availableSlots as Record<string, string[]>;
+  const todaySlots = availableSlots?.[dayName] || [];
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -40,9 +69,9 @@ export default function DentistDetailPage() {
             <p className="mt-4 text-gray-600">{dentist.bio}</p>
             <div className="mt-6 flex items-center gap-4">
               <div className="text-yellow-400 text-lg">
-                {"★".repeat(Math.round(dentist.rating))}
+                {"★".repeat(Math.round(Number(dentist.rating)))}
               </div>
-              <div className="text-gray-600">{dentist.rating.toFixed(1)}</div>
+              <div className="text-gray-600">{Number(dentist.rating).toFixed(1)}</div>
             </div>
             <div className="mt-6 flex gap-3">
               <button
@@ -60,8 +89,8 @@ export default function DentistDetailPage() {
             Available Slots Today
           </h2>
           <div className="flex flex-wrap gap-2">
-            {(dentist.availableSlots[today] || []).length > 0 ? (
-              (dentist.availableSlots[today] || []).map((s) => (
+            {todaySlots.length > 0 ? (
+              todaySlots.map((s) => (
                 <span
                   key={s}
                   className="px-3 py-1 rounded-full bg-white border text-sm"

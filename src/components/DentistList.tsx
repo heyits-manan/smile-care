@@ -1,12 +1,32 @@
 "use client";
-import { useState } from "react";
-import { dentists, Dentist } from "@/data/dentists";
+import { useState, useEffect } from "react";
+import { Dentist } from "@/db/schema";
 import DentistCard from "./DentistCard";
 import BookingModal from "./BookingModal";
 
 export default function DentistList() {
   const [selectedDentist, setSelectedDentist] = useState<Dentist | null>(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>("All");
+  const [dentists, setDentists] = useState<Dentist[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDentists = async () => {
+      try {
+        const response = await fetch("/api/dentists");
+        if (response.ok) {
+          const data = await response.json();
+          setDentists(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch dentists:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDentists();
+  }, []);
 
   const handleBookClick = (dentist: Dentist) => setSelectedDentist(dentist);
   const handleCloseModal = () => setSelectedDentist(null);
@@ -67,24 +87,36 @@ export default function DentistList() {
           ))}
         </div>
 
+        {/* Loading state */}
+        {loading && (
+          <div className="text-center py-16">
+            <div className="text-6xl mb-4">⏳</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              Loading dentists...
+            </h3>
+          </div>
+        )}
+
         {/* Dentist Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredDentists.map((dentist, index) => (
-            <div
-              key={dentist.id}
-              className="transform transition-all duration-500"
-              style={{
-                animationDelay: `${index * 100}ms`,
-                animation: "fadeInUp 0.6s ease-out forwards",
-              }}
-            >
-              <DentistCard dentist={dentist} onBookClick={handleBookClick} />
-            </div>
-          ))}
-        </div>
+        {!loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredDentists.map((dentist, index) => (
+              <div
+                key={dentist.id}
+                className="transform transition-all duration-500"
+                style={{
+                  animationDelay: `${index * 100}ms`,
+                  animation: "fadeInUp 0.6s ease-out forwards",
+                }}
+              >
+                <DentistCard dentist={dentist} onBookClick={handleBookClick} />
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Empty state */}
-        {filteredDentists.length === 0 && (
+        {!loading && filteredDentists.length === 0 && (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">🔍</div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { Dentist } from "@/data/dentists";
+import { Dentist } from "@/db/schema";
 
 interface DentistCardProps {
   dentist: Dentist;
@@ -12,17 +12,19 @@ export default function DentistCard({
   dentist,
   onBookClick,
 }: DentistCardProps) {
+  const availableSlots = dentist.availableSlots as Record<string, string[]>;
+
   const getNextAvailableSlot = () => {
     const today = new Date();
     for (let i = 0; i < 7; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      const dateStr = date.toISOString().split("T")[0];
+      const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
       if (
-        dentist.availableSlots[dateStr] &&
-        dentist.availableSlots[dateStr].length > 0
+        availableSlots[dayName] &&
+        availableSlots[dayName].length > 0
       ) {
-        const time = dentist.availableSlots[dateStr][0];
+        const time = availableSlots[dayName][0];
         const displayDate =
           i === 0
             ? "Today"
@@ -124,7 +126,7 @@ export default function DentistCard({
               <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1 rounded-full border border-yellow-200">
                 <span className="text-yellow-500 text-sm">⭐</span>
                 <span className="text-sm font-bold text-gray-900">
-                  {dentist.rating.toFixed(1)}
+                  {Number(dentist.rating).toFixed(1)}
                 </span>
               </div>
             </div>
