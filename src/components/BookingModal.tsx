@@ -39,6 +39,22 @@ export default function BookingModal({
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Fetch appointments from API on mount
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const response = await fetch('/api/appointments');
+        if (response.ok) {
+          const appointments = await response.json();
+          setAppointments(appointments);
+        }
+      } catch (error) {
+        console.error('Failed to fetch appointments:', error);
+      }
+    };
+    fetchAppointments();
+  }, [setAppointments]);
+
   // Handle escape key to close modal
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -149,19 +165,31 @@ export default function BookingModal({
     setIsSubmitting(true);
 
     try {
-      const newAppointment: Appointment = {
-        id: `apt-${Date.now()}`,
-        dentistId: dentist.id,
-        dentistName: dentist.name,
-        ...formData,
-        createdAt: new Date().toISOString(),
-      };
+      const response = await fetch('/api/appointments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          dentistId: dentist.id,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to book appointment');
+      }
+
+      const newAppointment = await response.json();
 
       setAppointments((prev) => [...prev, newAppointment]);
       onBookingConfirmed?.(newAppointment);
       onClose();
     } catch (error) {
       console.error("Failed to book appointment:", error);
+      // You might want to show an error message to the user here
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -240,13 +268,8 @@ export default function BookingModal({
                 <h2 id="modal-title" className="text-2xl font-bold">
                   Book with {dentist.name}
                 </h2>
-                <p className="text-indigo-100 mt-1 flex items-center gap-2">
+                <p className="text-indigo-100 mt-1">
                   <span>{dentist.specialty}</span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1">
-                    <span>⭐</span>
-                    {Number(dentist.rating).toFixed(1)}
-                  </span>
                 </p>
               </div>
             </div>
@@ -643,12 +666,6 @@ export default function BookingModal({
                     <p className="text-indigo-600 font-semibold">
                       {dentist.specialty}
                     </p>
-                    <div className="flex items-center gap-1 mt-1">
-                      <span className="text-yellow-500">⭐</span>
-                      <span className="text-sm font-semibold">
-                        {Number(dentist.rating).toFixed(1)} rating
-                      </span>
-                    </div>
                   </div>
                 </div>
 

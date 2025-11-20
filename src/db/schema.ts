@@ -1,7 +1,7 @@
 import { pgTable, text, varchar, timestamp, jsonb, decimal, uuid, pgEnum } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
-export const userRoleEnum = pgEnum('user_role', ['user', 'admin', 'superadmin']);
+// export const userRoleEnum = pgEnum('user_role', ['user', 'admin', 'superadmin']);
 
 export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -10,7 +10,7 @@ export const users = pgTable('users', {
   password: text('password'),
   fullName: varchar('full_name', { length: 255 }).notNull(),
   phone: varchar('phone', { length: 20 }),
-  role: userRoleEnum('role').notNull().default('user'),
+  // role: userRoleEnum('role').notNull().default('user'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -19,7 +19,7 @@ export const dentists = pgTable('dentists', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   specialty: varchar('specialty', { length: 255 }).notNull(),
-  rating: decimal('rating', { precision: 2, scale: 1 }).notNull().default('5.0'),
+  // rating: decimal('rating', { precision: 2, scale: 1 }).notNull().default('5.0'),
   photo: text('photo').notNull(),
   bio: text('bio').notNull(),
   availableSlots: jsonb('available_slots').notNull(),
