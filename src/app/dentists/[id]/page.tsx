@@ -67,12 +67,6 @@ export default function DentistDetailPage() {
               {dentist.name}
             </h1>
             <p className="mt-4 text-gray-600">{dentist.bio}</p>
-            <div className="mt-6 flex items-center gap-4">
-              <div className="text-yellow-400 text-lg">
-                {"★".repeat(Math.round(Number(dentist.rating)))}
-              </div>
-              <div className="text-gray-600">{Number(dentist.rating).toFixed(1)}</div>
-            </div>
             <div className="mt-6 flex gap-3">
               <button
                 onClick={() => setIsModalOpen(true)}

@@ -20,7 +20,6 @@ export async function GET(req: NextRequest) {
       id: dentist.id,
       name: dentist.name,
       specialty: dentist.specialty,
-      rating: Number(dentist.rating),
       photo: dentist.photo,
       bio: dentist.bio,
       availableSlots: dentist.availableSlots as Record<string, string[]>,

@@ -121,14 +121,6 @@ export default function DentistCard({
                   {dentist.specialty}
                 </p>
               </div>
-
-              {/* Rating */}
-              <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1 rounded-full border border-yellow-200">
-                <span className="text-yellow-500 text-sm">⭐</span>
-                <span className="text-sm font-bold text-gray-900">
-                  {Number(dentist.rating).toFixed(1)}
-                </span>
-              </div>
             </div>
           </div>
         </div>

@@ -10,7 +10,8 @@
       "Bash(npx tsx:*)",
       "Bash(cat:*)",
       "Bash(npm uninstall:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

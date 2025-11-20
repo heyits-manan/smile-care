@@ -16,47 +16,19 @@ export default async function UsersPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[
-          {
-            label: "Total Users",
-            value: allUsers.length,
-            icon: "👥",
-            color: "from-blue-500 to-cyan-500",
-          },
-          {
-            label: "Admins",
-            value: allUsers.filter((u) => u.role === "admin").length,
-            icon: "⚙️",
-            color: "from-purple-500 to-pink-500",
-          },
-          {
-            label: "Super Admins",
-            value: allUsers.filter((u) => u.role === "superadmin").length,
-            icon: "👑",
-            color: "from-amber-500 to-orange-500",
-          },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  {stat.label}
-                </p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">
-                  {stat.value}
-                </p>
-              </div>
-              <div
-                className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white text-2xl shadow-lg`}
-              >
-                {stat.icon}
-              </div>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Users</p>
+              <p className="text-3xl font-bold text-gray-900 mt-2">
+                {allUsers.length}
+              </p>
+            </div>
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white text-2xl shadow-lg">
+              👥
             </div>
           </div>
-        ))}
+        </div>
       </div>
 
       {/* Users Table */}
@@ -73,9 +45,6 @@ export default async function UsersPage() {
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Phone
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Role
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Joined
@@ -110,22 +79,6 @@ export default async function UsersPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                        user.role === "superadmin"
-                          ? "bg-amber-100 text-amber-800"
-                          : user.role === "admin"
-                          ? "bg-purple-100 text-purple-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {user.role === "superadmin" && "👑 "}
-                      {user.role === "admin" && "⚙️ "}
-                      {user.role === "user" && "👤 "}
-                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
                     <div className="text-sm text-gray-600">
                       {new Date(user.createdAt).toLocaleDateString("en-US", {
                         month: "short",
@@ -133,6 +86,11 @@ export default async function UsersPage() {
                         year: "numeric",
                       })}
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button className="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+                      View
+                    </button>
                   </td>
                 </tr>
               ))}
