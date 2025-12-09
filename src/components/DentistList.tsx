@@ -3,6 +3,10 @@ import { useState, useEffect } from "react";
 import { Dentist } from "@/db/schema";
 import DentistCard from "./DentistCard";
 import BookingModal from "./BookingModal";
+import {
+  UserGroupIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
 
 export default function DentistList() {
   const [selectedDentist, setSelectedDentist] = useState<Dentist | null>(null);
@@ -42,29 +46,20 @@ export default function DentistList() {
       : dentists.filter((d) => d.specialty === selectedSpecialty);
 
   return (
-    <section className="relative bg-gradient-to-br from-gray-50 via-white to-indigo-50 py-20">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-72 h-72 bg-gradient-to-br from-blue-200 to-indigo-200 rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full blur-3xl opacity-20"></div>
-      </div>
-
+    <section className="relative bg-white py-20">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium text-indigo-700 mb-4 shadow-sm border border-indigo-100">
-            <span className="text-lg">👨‍⚕️</span>
+          <div className="inline-flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full text-sm font-medium text-blue-700 mb-4 border border-blue-100">
+            <UserGroupIcon className="w-5 h-5" />
             Expert Medical Team
           </div>
 
-          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
-            Meet our{" "}
-            <span className="bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
-              specialists
-            </span>
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+            Meet our <span className="text-blue-600 italic">specialists</span>
           </h2>
 
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Skilled, compassionate dentists with years of experience, ready to
             provide you with the best care possible.
           </p>
@@ -76,10 +71,10 @@ export default function DentistList() {
             <button
               key={specialty}
               onClick={() => setSelectedSpecialty(specialty)}
-              className={`px-6 py-3 rounded-2xl font-semibold text-sm transition-all duration-300 ${
+              className={`px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 shadow-sm ${
                 selectedSpecialty === specialty
-                  ? "bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg scale-105"
-                  : "bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 border border-gray-200"
+                  ? "bg-blue-600 text-white shadow-md hover:bg-blue-700 hover:shadow-lg transform hover:scale-105"
+                  : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 hover:border-gray-300"
               }`}
             >
               {specialty}
@@ -89,9 +84,9 @@ export default function DentistList() {
 
         {/* Loading state */}
         {loading && (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">⏳</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <div className="text-center py-20">
+            <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <h3 className="text-xl font-medium text-gray-900">
               Loading dentists...
             </h3>
           </div>
@@ -117,44 +112,42 @@ export default function DentistList() {
 
         {/* Empty state */}
         {!loading && filteredDentists.length === 0 && (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+            <MagnifyingGlassIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
               No dentists found
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-500">
               Try selecting a different specialty.
             </p>
           </div>
         )}
 
         {/* Stats */}
-        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-lg">
-            <div className="text-3xl font-black text-indigo-600 mb-2">
+        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="text-3xl font-bold text-blue-600 mb-1">
               {dentists.length}+
             </div>
-            <div className="text-sm font-semibold text-gray-700">
+            <div className="text-xs text-gray-600 font-semibold uppercase tracking-wide">
               Expert Dentists
             </div>
           </div>
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-lg">
-            <div className="text-3xl font-black text-green-600 mb-2">15+</div>
-            <div className="text-sm font-semibold text-gray-700">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="text-3xl font-bold text-green-600 mb-1">15+</div>
+            <div className="text-xs text-gray-600 font-semibold uppercase tracking-wide">
               Years Experience
             </div>
           </div>
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-lg">
-            <div className="text-3xl font-black text-purple-600 mb-2">
-              2000+
-            </div>
-            <div className="text-sm font-semibold text-gray-700">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="text-3xl font-bold text-teal-600 mb-1">2000+</div>
+            <div className="text-xs text-gray-600 font-semibold uppercase tracking-wide">
               Happy Patients
             </div>
           </div>
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-lg">
-            <div className="text-3xl font-black text-orange-600 mb-2">24/7</div>
-            <div className="text-sm font-semibold text-gray-700">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="text-3xl font-bold text-amber-600 mb-1">24/7</div>
+            <div className="text-xs text-gray-600 font-semibold uppercase tracking-wide">
               Emergency Care
             </div>
           </div>
